@@ -1,4 +1,4 @@
 # Scanfer
 
 ## Desciption
-Scan and send files on the go!!!
+Scan and send files on the go!!! :)
