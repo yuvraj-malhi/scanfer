@@ -2,14 +2,14 @@
 
 char *modes[] = {"-s"           ,"-t"            };
 char *descr[] = {"Local scan"   ,"File transfer" };
-
+char name [50];
 
 void print_help()
 {
     printf("ERROR: Please enter one of the following options:-\n");
 
     for(int i=0; descr[i]; i++)
-        printf("\t%s   :   %s\n", modes[i], descr[i]);
+        printf("%10s   :   %s\n", modes[i], descr[i]);
 
 }
 
@@ -30,6 +30,24 @@ int mode_parse(char* argv)
     return -1;
 }
 
+void set_name()
+{
+    printf("Enter your name (Optional): ");
+    fgets(name, sizeof(name), stdin);
+    if (name[0]=='\n')
+    {
+        strcpy(name, DEF_NAME);
+        int rd;
+
+        srand(time(0));
+        do rd = rand();
+        while (rd < 10 || 999 < rd);
+        char rd_str[4];
+        sprintf(rd_str, "%d", rd);
+        strncat(name, rd_str, sizeof(rd_str));
+    }
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -43,6 +61,9 @@ int main(int argc, char *argv[])
 
     int ret = mode_parse(argv[1]);
     int run;
+
+    set_name();
+    printf("\n                      Hello %s \n",name);
 
     if(ret==-1)
         print_help();

@@ -8,24 +8,24 @@ int display_IP()
 	struct hostent *hen;
 	if(gethostname(host, sizeof(host)) == -1)
 	{
-        perror("Host Name ERROR");
+        perror("Could not display IP");
         return -1;
 	}
 
 	if((hen = gethostbyname(host))==NULL)
 	{
-        perror("Host IP ERROR");
+        perror("Could not display IP");
         return -1;
 	}
 
     struct ifaddrs *ifaddr, *ifa;
     if(getifaddrs(&ifaddr)==-1)
     {
-        perror("IP Interface ERROR");
+        perror("Could not display IP");
         return -1;
     }
 
-    printf("\nInstalled interfaces for \'%s\':-\n",host);
+    printf("\nInstalled IPv4 interfaces for \'%s\':-\n",host);
 
     int s;
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) 
@@ -39,12 +39,11 @@ int display_IP()
         {
             if (s != 0)
             {
-                printf("Name Info ERROR: %s\n", gai_strerror(s));
+                perror("Could not display IP");
                 return -1;
             }
             
-            char* st = ":";
-            printf("%10s   %s   %s\n", ifa->ifa_name, st, host);
+            printf("%10s   :   %s\n", ifa->ifa_name, host);
         }
     }
 
@@ -52,11 +51,35 @@ int display_IP()
 
 }
 
+int init_socket()
+{
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if(sock<0) return -1;
+
+    int enable = -1;
+    int ret = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(enable));
+    if(ret<0) return -1;
+
+
+
+}
+
 
 int scanner_main()
 {
-    printf("-----------------------  SCANNER  ------------------------\n");
+    printf("\n-----------------------  SCANNER  ------------------------\n");
     display_IP();
+
+    int sock_fd = init_socket();
+    
+    if(sock_fd<-1)
+    {
+        perror("Socket error");
+        return -1;
+    }
+
+
+
 
     return 1;
 }
